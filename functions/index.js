@@ -1,9 +1,31 @@
-import express from 'express'
-import cors from 'cors'
-import { PrismaClient } from '@prisma/client'
+/**
+ * Import function triggers from their respective submodules:
+ *
+ * const {onCall} = require("firebase-functions/v2/https");
+ * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
+ *
+ * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ */
+
+const {onRequest} = require("firebase-functions/v2/https");
+const logger = require("firebase-functions/logger");
+const express = require("express");
+const cors = require("cors");
+
+const functions = require("firebase-functions")
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
+// use `prisma` in your application to read and write data in your DB
+
+// Create and deploy your first functions
+// https://firebase.google.com/docs/functions/get-started
+
+exports.helloWorld = onRequest((request, response) => {
+  logger.info("Hello logs!", {structuredData: true});
+  response.send("Hello from Firebase!");
+});
 
 // console.log('DATABASE_URL:', process.env.DATABASE_URL)
-const prisma = new PrismaClient()
 
 const app = express()
 
@@ -101,29 +123,4 @@ app.delete('/users/:id', async (req, res) =>{
 
 })
 
-// app.listen(3000)
-
-export default app
-
-/*
-    Criar API de Usuários
-    
-    - Criar um usuário
-    - Listar todos os usuários
-    - Editar um usuário
-    - Deletar um usuário
-
-    1) tipo de rota / método HTTP
-    2) endereço
-*/
-
-/*
-db mongo
-user "admin"
-pass "oN5NkXHcMEpiOSMj"
-db "Cluster0"
-
-mongodb+srv://admin:oN5NkXHcMEpiOSMj@cluster0.qrmyg.mongodb.net/
-mongodb+srv://admin:<db_password>@cluster0.qrmyg.mongodb.net/Cluster0?retryWrites=true&w=majority&appName=Cluster0   <<<<<
-
- */
+exports.app = functions.https.onRequest(app);
